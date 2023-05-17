@@ -1,0 +1,417 @@
+{
+	"info": {
+		"_postman_id": "ecf391ba-9fd0-423c-8d62-53a7be935b2f",
+		"name": "Freightfox",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14140192"
+	},
+	"item": [
+		{
+			"name": "1-Deploy",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "data",
+							"type": "file",
+							"src": "/C:/Users/bharg/OneDrive/Desktop/freighfox_offline.bpmn"
+						},
+						{
+							"key": "enable-duplicate-filtering",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "deployment-name",
+							"value": "fourth deployment",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{camunda_local}}/{{basepath}}/deployment/create",
+					"host": [
+						"{{camunda_local}}"
+					],
+					"path": [
+						"{{basepath}}",
+						"deployment",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2-Start-Process-Instance",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "securityUser",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"businessKey\": \"{{$guid}}\",\r\n    \"variables\": {\r\n        \"vehicleNumber\": {\r\n            \"value\": \"AP 124\",\r\n            \"type\": \"String\"\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{camunda_local}}/{{basepath}}/process-definition/key/:keyName/start",
+					"host": [
+						"{{camunda_local}}"
+					],
+					"path": [
+						"{{basepath}}",
+						"process-definition",
+						"key",
+						":keyName",
+						"start"
+					],
+					"variable": [
+						{
+							"key": "keyName",
+							"value": "{{key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3-Get Tasks",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "logisticexecutivesUser",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{camunda_local}}/{{basepath}}/task?active=true&processVariables=vehicleNumber_eq_AP 124",
+					"host": [
+						"{{camunda_local}}"
+					],
+					"path": [
+						"{{basepath}}",
+						"task"
+					],
+					"query": [
+						{
+							"key": "active",
+							"value": "true"
+						},
+						{
+							"key": "processVariables",
+							"value": "vehicleNumber_eq_AP 124"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4- Complete Driver Document Check",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "logisticexecutivesUser",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"variables\": {\r\n        \"documents\": {\r\n            \"value\": \"Yes\"\r\n        },\r\n        \"direction\": {\r\n            \"value\": \"Inward\"\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{camunda_local}}/{{basepath}}/task/:id/complete",
+					"host": [
+						"{{camunda_local}}"
+					],
+					"path": [
+						"{{basepath}}",
+						"task",
+						":id",
+						"complete"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "0e09bd4b-f49f-11ed-a618-cc6b1e5aeb45"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5- Complete Vehicle quality Check",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "securityUser",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"variables\": {\r\n        \"qi\": {\r\n            \"value\": \"Yes\"\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{camunda_local}}/{{basepath}}/task/:id/complete",
+					"host": [
+						"{{camunda_local}}"
+					],
+					"path": [
+						"{{basepath}}",
+						"task",
+						":id",
+						"complete"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "93745c67-f49e-11ed-a618-cc6b1e5aeb45"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6- Complete Loading/Unloading Slip Check",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "logisticexecutivesUser",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"variables\": {\r\n        \"slip\": {\r\n            \"value\": \"Yes\"\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{camunda_local}}/{{basepath}}/task/:id/complete",
+					"host": [
+						"{{camunda_local}}"
+					],
+					"path": [
+						"{{basepath}}",
+						"task",
+						":id",
+						"complete"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "f4541faa-f49d-11ed-a618-cc6b1e5aeb45"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7-Process Instance",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{camunda_local}}/{{basepath}}/process-instance?ended=true",
+					"host": [
+						"{{camunda_local}}"
+					],
+					"path": [
+						"{{basepath}}",
+						"process-instance"
+					],
+					"query": [
+						{
+							"key": "ended",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8-Inward/Outward Vehicles",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "logisticexecutivesUser",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"variables\": [\r\n        {\r\n            \"name\": \"direction\",\r\n            \"value\": \"Outward\",\r\n            \"operator\": \"eq\"\r\n        },\r\n        {\r\n            \"name\": \"documents\",\r\n            \"value\": \"Yes\",\r\n            \"operator\": \"eq\"\r\n        },\r\n        {\r\n            \"name\": \"slip\",\r\n            \"value\": \"Yes\",\r\n            \"operator\": \"eq\"\r\n        }\r\n    ],\r\n    \"sorting\": [\r\n        {\r\n            \"sortBy\": \"startTime\",\r\n            \"sortOrder\": \"asc\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{camunda_local}}/{{basepath}}/history/process-instance",
+					"host": [
+						"{{camunda_local}}"
+					],
+					"path": [
+						"{{basepath}}",
+						"history",
+						"process-instance"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "basepath",
+			"value": "engine-rest",
+			"type": "string"
+		},
+		{
+			"key": "key",
+			"value": "template-human-task-tutorial",
+			"type": "string"
+		},
+		{
+			"key": "process-instance-id",
+			"value": "a6281056-f32b-11ed-b7c1-cc6b1e5aeb45",
+			"type": "string"
+		},
+		{
+			"key": "businessKey",
+			"value": "4ec3e763-4068-4701-a3a2-1ea7ba3715e5",
+			"type": "string"
+		}
+	]
+}

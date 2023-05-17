@@ -1,0 +1,5 @@
+com\freightgox\workflow\Application.class
+com\freightgox\workflow\controller\InwardController.class
+com\freightgox\workflow\dto\InputDto.class
+com\freightgox\workflow\service\impl\InwardServiceIml.class
+com\freightgox\workflow\service\InwardService.class

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0qfl09a" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.11.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.19.0">
+  <bpmn:process id="Freightfox_inward_outward" name="Freightfox Vehicle Inward Outward BPMN" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>Flow_0g183i5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0g183i5" sourceRef="StartEvent_1" targetRef="Activity_1h2syw5" />
+    <bpmn:userTask id="Activity_1h2syw5" name="Check driver documents and direction" camunda:candidateGroups="security, camunda-admin">
+      <bpmn:incoming>Flow_0g183i5</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hyiu52</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_1ls7yst">
+      <bpmn:incoming>Flow_1hyiu52</bpmn:incoming>
+      <bpmn:outgoing>Flow_13kma3e</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0r6r8ji</bpmn:outgoing>
+      <bpmn:outgoing>Flow_094sgtg</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1hyiu52" sourceRef="Activity_1h2syw5" targetRef="Gateway_1ls7yst" />
+    <bpmn:sequenceFlow id="Flow_13kma3e" name="Inward" sourceRef="Gateway_1ls7yst" targetRef="Activity_1d535e9">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${documents=='Yes'  &amp;&amp; direction=='Inward'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_1d535e9" name="Check Vehicle quality" camunda:candidateGroups="security, camunda-admin">
+      <bpmn:incoming>Flow_13kma3e</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gve9yh</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0r6r8ji" name="Outward" sourceRef="Gateway_1ls7yst" targetRef="Event_1gbfj39">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${documents=='No'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_00z0suz">
+      <bpmn:incoming>Flow_1gve9yh</bpmn:incoming>
+      <bpmn:outgoing>Flow_02fdq2g</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0a5fpq5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1gve9yh" sourceRef="Activity_1d535e9" targetRef="Gateway_00z0suz" />
+    <bpmn:sequenceFlow id="Flow_02fdq2g" name="QIPassed" sourceRef="Gateway_00z0suz" targetRef="Event_0h69w5k">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${qi=='Yes'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0a5fpq5" name="QIFailed" sourceRef="Gateway_00z0suz" targetRef="Event_15f0lk7">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${qi=='No'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:intermediateThrowEvent id="Event_0h69w5k" name="Goods Loading">
+      <bpmn:incoming>Flow_02fdq2g</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ni5w7m</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_1ni5w7m" sourceRef="Event_0h69w5k" targetRef="Activity_0wqcey6" />
+    <bpmn:exclusiveGateway id="Gateway_0ljoxzk">
+      <bpmn:incoming>Flow_0hmqzie</bpmn:incoming>
+      <bpmn:outgoing>Flow_0d230b9</bpmn:outgoing>
+      <bpmn:outgoing>Flow_01tupv9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0hmqzie" sourceRef="Activity_0wqcey6" targetRef="Gateway_0ljoxzk" />
+    <bpmn:endEvent id="Event_1kpxmgj" name="Exit">
+      <bpmn:incoming>Flow_0d230b9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0d230b9" name="ExitSlipPresent" sourceRef="Gateway_0ljoxzk" targetRef="Event_1kpxmgj">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${slip=='Yes'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_01tupv9" name="ExitSlipAbsent" sourceRef="Gateway_0ljoxzk" targetRef="Event_183mbqp">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${slip=='No'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:intermediateThrowEvent id="Event_1u61ml3" name="Goods unloading">
+      <bpmn:incoming>Flow_094sgtg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0q8apua</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_094sgtg" sourceRef="Gateway_1ls7yst" targetRef="Event_1u61ml3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${documents=='Yes'  &amp;&amp; direction=='Outward'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0q8apua" sourceRef="Event_1u61ml3" targetRef="Activity_0wqcey6" />
+    <bpmn:userTask id="Activity_0wqcey6" name="Check loading/unloading slip" camunda:candidateGroups="security, camunda-admin">
+      <bpmn:incoming>Flow_1ni5w7m</bpmn:incoming>
+      <bpmn:incoming>Flow_0q8apua</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hmqzie</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1gbfj39" name="Driver Document Journey ends">
+      <bpmn:incoming>Flow_0r6r8ji</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0gzxt68" errorRef="Error_1awvyab" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_15f0lk7" name="Quality Inspection failed">
+      <bpmn:incoming>Flow_0a5fpq5</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0djs5b6" errorRef="Error_0zevihu" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_183mbqp" name="Stop">
+      <bpmn:incoming>Flow_01tupv9</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_003j401" errorRef="Error_1jvzia3" />
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:error id="Error_1awvyab" name="Driver_Document_Error" errorCode="9001" camunda:errorMessage="Driver has no Documents" />
+  <bpmn:error id="Error_0zevihu" name="QI_Error" errorCode="9002" camunda:errorMessage="Vehicle Failed Quality Inspection" />
+  <bpmn:error id="Error_1jvzia3" name="Slip_Absent_error" errorCode="9003" camunda:errorMessage="Loading/Unloading slip is not present" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Freightfox_inward_outward">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="189" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="185" y="232" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10n8uxx_di" bpmnElement="Activity_1h2syw5">
+        <dc:Bounds x="270" y="167" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ls7yst_di" bpmnElement="Gateway_1ls7yst" isMarkerVisible="true">
+        <dc:Bounds x="425" y="182" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rahafe_di" bpmnElement="Activity_1d535e9">
+        <dc:Bounds x="530" y="167" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_00z0suz_di" bpmnElement="Gateway_00z0suz" isMarkerVisible="true">
+        <dc:Bounds x="685" y="182" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0h69w5k_di" bpmnElement="Event_0h69w5k">
+        <dc:Bounds x="952" y="189" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="933" y="232" width="75" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0ljoxzk_di" bpmnElement="Gateway_0ljoxzk" isMarkerVisible="true">
+        <dc:Bounds x="1215" y="182" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1kpxmgj_di" bpmnElement="Event_1kpxmgj">
+        <dc:Bounds x="1332" y="189" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1340" y="232" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1u61ml3_di" bpmnElement="Event_1u61ml3">
+        <dc:Bounds x="942" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="918" y="125" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10n63al_di" bpmnElement="Activity_0wqcey6">
+        <dc:Bounds x="1050" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0zz7ag6_di" bpmnElement="Event_1gbfj39">
+        <dc:Bounds x="532" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="512" y="345" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14ncza8_di" bpmnElement="Event_15f0lk7">
+        <dc:Bounds x="792" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="766" y="345" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0tpo4n3_di" bpmnElement="Event_183mbqp">
+        <dc:Bounds x="1332" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1339" y="345" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0g183i5_di" bpmnElement="Flow_0g183i5">
+        <di:waypoint x="215" y="207" />
+        <di:waypoint x="270" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hyiu52_di" bpmnElement="Flow_1hyiu52">
+        <di:waypoint x="370" y="207" />
+        <di:waypoint x="425" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13kma3e_di" bpmnElement="Flow_13kma3e">
+        <di:waypoint x="475" y="207" />
+        <di:waypoint x="530" y="207" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="486" y="189" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0r6r8ji_di" bpmnElement="Flow_0r6r8ji">
+        <di:waypoint x="450" y="232" />
+        <di:waypoint x="450" y="320" />
+        <di:waypoint x="532" y="320" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="459" y="273" width="42" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gve9yh_di" bpmnElement="Flow_1gve9yh">
+        <di:waypoint x="630" y="207" />
+        <di:waypoint x="685" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02fdq2g_di" bpmnElement="Flow_02fdq2g">
+        <di:waypoint x="735" y="207" />
+        <di:waypoint x="952" y="207" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="755" y="189" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a5fpq5_di" bpmnElement="Flow_0a5fpq5">
+        <di:waypoint x="710" y="232" />
+        <di:waypoint x="710" y="320" />
+        <di:waypoint x="792" y="320" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="705" y="273" width="42" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ni5w7m_di" bpmnElement="Flow_1ni5w7m">
+        <di:waypoint x="988" y="207" />
+        <di:waypoint x="1050" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hmqzie_di" bpmnElement="Flow_0hmqzie">
+        <di:waypoint x="1150" y="207" />
+        <di:waypoint x="1215" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0d230b9_di" bpmnElement="Flow_0d230b9">
+        <di:waypoint x="1265" y="207" />
+        <di:waypoint x="1332" y="207" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1263" y="189" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01tupv9_di" bpmnElement="Flow_01tupv9">
+        <di:waypoint x="1240" y="232" />
+        <di:waypoint x="1240" y="320" />
+        <di:waypoint x="1332" y="320" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1254" y="273" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_094sgtg_di" bpmnElement="Flow_094sgtg">
+        <di:waypoint x="450" y="182" />
+        <di:waypoint x="450" y="100" />
+        <di:waypoint x="942" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q8apua_di" bpmnElement="Flow_0q8apua">
+        <di:waypoint x="978" y="100" />
+        <di:waypoint x="1014" y="100" />
+        <di:waypoint x="1014" y="177" />
+        <di:waypoint x="1050" y="177" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
